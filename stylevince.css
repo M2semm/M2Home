@@ -1,32 +1,63 @@
-
-
-
-
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body{
+    display: flex;
     justify-content: center;
-}
-
-
-
-
-
-
-.een{
-    color: darkblue;
-}
-
-.twee{
-color: aqua;
+    align-items: center;
+    position: relative;
+    height: 100vh;
+    background-color: blue;
 }
 
 .poep{
-    
+ position: relative;
 width: 50%;
 margin: 0 auto;
 text-align: center;
-background-color: lightgrey;
+background-color: white;
+padding: 20px;
+border-radius: 10px;
 }
+
+
+.een{
+    padding: 15px;
+}
+
+.twee{
+padding: 10px;
+}
+
+
+
+.drie{
+padding: 10px;
+
+}
+
+.vier{
+padding: 15px;
+}
+
+.rem{
+    padding: 10px;
+}
+
+.pass{
+    padding: 10px;
+}
+
+#username{
+    border-radius: 20px;}
+
+#password{
+border-radius: 20px;
+    }
+
 
 
 
