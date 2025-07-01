@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 import requests
 
 views = Blueprint('views', __name__)
@@ -10,9 +10,18 @@ def home():
     return render_template('home.html')
 
 def get_user_location():
-    """Haal gebruiker locatie op via IP adres"""
+    """Haal gebruiker locatie op - eerst eigen instelling, dan IP adres"""
     try:
-        # Haal client IP op
+        # Gebruik eerst de gebruiker's eigen instellingen
+        if current_user.is_authenticated and current_user.city and current_user.latitude and current_user.longitude:
+            return {
+                'city': current_user.city,
+                'lat': current_user.latitude,
+                'lon': current_user.longitude,
+                'country': 'NL'
+            }
+        
+        # Fallback naar IP-based locatie
         client_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.environ.get('REMOTE_ADDR', ''))
         
         # Als localhost (development), gebruik echte externe IP

@@ -33,6 +33,15 @@ Dubbelklik op `start.bat` om automatisch alles te installeren en starten.
 3. Klik op "Heeft u nog geen account? Registreer hier" om een account aan te maken
 4. Log in met je nieuwe account om toegang te krijgen tot het dashboard
 
+### Locatie Instellen
+
+De weer informatie wordt automatisch bepaald via je IP-adres, maar dit is niet altijd nauwkeurig:
+
+1. Klik op "Instellingen" in de sidebar
+2. Vul je eigen stad in (bijv. "Landgraaf", "Heerlen", "Maastricht")
+3. Klik "Locatie Bijwerken"
+4. De weersinformatie wordt nu gebaseerd op jouw exacte locatie
+
 ## Project Structuur
 
 ```
@@ -54,8 +63,24 @@ M2Home/
     └── templates/
         ├── home.html      # Dashboard template
         ├── login.html     # Login pagina
-        └── register.html  # Registratie pagina
+        ├── register.html  # Registratie pagina
+        └── settings.html  # Instellingen pagina
 ```
+
+## Locatie Probleem Oplossen
+
+**Probleem**: Weer toont verkeerde locatie (bijv. Den Haag in plaats van Landgraaf)
+
+**Oorzaak**: IP-gebaseerde locatie detectie is niet altijd nauwkeurig door:
+- ISP server locaties
+- VPN/Proxy gebruik
+- Geolocation database onnauwkeurigheden
+
+**Oplossing**: 
+1. Log in op je account
+2. Ga naar "Instellingen" 
+3. Vul je eigen stad in
+4. De app gebruikt nu jouw exacte locatie voor weersinformatie
 
 ## API's
 

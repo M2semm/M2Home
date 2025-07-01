@@ -3,6 +3,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from . import db
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
+import requests
+import requests
 
 
 auth = Blueprint('auth', __name__)
@@ -87,3 +89,31 @@ def logout():
     logout_user()
     flash('Je bent uitgelogd.', category='success')
     return redirect(url_for('auth.login'))
+
+@auth.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    if request.method == 'POST':
+        city = request.form.get('city')
+        if city:
+            # Zoek coördinaten voor de stad via OpenWeatherMap
+            API_KEY = "abe37049e3552c127fe464726a70f77c"
+            try:
+                geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city},NL&limit=1&appid={API_KEY}"
+                geo_response = requests.get(geo_url, timeout=5)
+                geo_data = geo_response.json()
+                
+                if geo_data:
+                    current_user.city = city
+                    current_user.latitude = geo_data[0]['lat']
+                    current_user.longitude = geo_data[0]['lon']
+                    db.session.commit()
+                    flash(f'Locatie is bijgewerkt naar {city}!', category='success')
+                else:
+                    flash('Stad niet gevonden. Probeer een andere naam.', category='error')
+            except Exception as e:
+                flash('Fout bij het bijwerken van de locatie.', category='error')
+        
+        return redirect(url_for('auth.settings'))
+    
+    return render_template('settings.html')

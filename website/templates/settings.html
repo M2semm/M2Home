@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M2Home - Instellingen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <h3><i class="fas fa-cog"></i> Instellingen</h3>
+        </div>
+        
+        <!-- Settings Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#locatie" data-setting="locatie">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Locatie
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#account" data-setting="account">
+                        <i class="fas fa-user"></i>
+                        Account
+                        <small class="text-muted">(Binnenkort)</small>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#thema" data-setting="thema">
+                        <i class="fas fa-palette"></i>
+                        Thema
+                        <small class="text-muted">(Binnenkort)</small>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#notificaties" data-setting="notificaties">
+                        <i class="fas fa-bell"></i>
+                        Notificaties
+                        <small class="text-muted">(Binnenkort)</small>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <a class="nav-link" href="{{ url_for('views.home') }}">
+                <i class="fas fa-arrow-left"></i>
+                Terug naar Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="messages-container">
+                {% for category, message in messages %}
+                {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>          
+                {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Settings Header -->
+        <div class="settings-header">
+            <h1><i class="fas fa-map-marker-alt"></i> Locatie Instellingen</h1>
+            <p class="text-muted">Stel je locatie in voor nauwkeurige weersinformatie</p>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="settings-content">
+            <!-- Locatie Settings Card -->
+            <div id="locatie-section" class="settings-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-globe"></i> Weer Locatie</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="settings-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="current-location">Huidige locatie</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                        <input type="text" id="current-location" class="form-control" 
+                                               value="{% if current_user.city %}{{ current_user.city }}{% else %}Automatisch gedetecteerd{% endif %}" 
+                                               readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="city">Nieuwe locatie</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-city"></i></span>
+                                        <input type="text" id="city" name="city" class="form-control"
+                                               placeholder="Bijv. Landgraaf, Heerlen, Maastricht" required>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-info-circle"></i>
+                                        Vul je eigen stad in voor nauwkeurige weersinformatie
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Locatie Bijwerken
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-undo"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Placeholder voor toekomstige settings -->
+            <div id="account-section" class="settings-card d-none">
+                <div class="card-header">
+                    <h3><i class="fas fa-user"></i> Account Instellingen</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Account instellingen komen binnenkort beschikbaar.</p>
+                </div>
+            </div>
+
+            <div id="thema-section" class="settings-card d-none">
+                <div class="card-header">
+                    <h3><i class="fas fa-palette"></i> Thema Instellingen</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Thema aanpassingen komen binnenkort beschikbaar.</p>
+                </div>
+            </div>
+
+            <div id="notificaties-section" class="settings-card d-none">
+                <div class="card-header">
+                    <h3><i class="fas fa-bell"></i> Notificatie Instellingen</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Notificatie instellingen komen binnenkort beschikbaar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="settings-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-home"></i> M2Home</h5>
+                        <p class="text-muted">Smart Home Dashboard v1.0</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p class="text-muted">
+                            <i class="fas fa-user"></i> 
+                            Ingelogd als: <strong>{{ current_user.username }}</strong>
+                        </p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i>
+                            Laatste update: <span id="current-time"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+</body>
+</html>
