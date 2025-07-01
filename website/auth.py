@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_user, login_required, logout_user, current_user
 from . import db
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -50,7 +51,39 @@ def register():
             new_user = User(username=username, email=email, password=generate_password_hash(password))
             db.session.add(new_user)
             db.session.commit()
+            login_user(new_user, remember=True)
             flash("Registratie succesvol!", category='success')
             return redirect(url_for('views.home'))
         
     return render_template('register.html')
+
+
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if not username or not password:
+            flash('Vul alle velden in.', category='error')
+            return render_template('login.html')
+        
+        # Zoek gebruiker op username of email
+        user = User.query.filter((User.username == username) | (User.email == username)).first()
+        
+        if user and check_password_hash(user.password, password):
+            login_user(user, remember=True)
+            flash('Succesvol ingelogd!', category='success')
+            return redirect(url_for('views.home'))
+        else:
+            flash('Ongeldige inloggegevens.', category='error')
+            return render_template('login.html')
+    
+    return render_template('login.html')
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Je bent uitgelogd.', category='success')
+    return redirect(url_for('auth.login'))
